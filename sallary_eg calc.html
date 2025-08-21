@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="ar"><head>
+  <meta charset="UTF-8">
+  <title>حاسبة مرتبات المصريين في السوق الخليجي وفق القوة الشرائية الفعلية</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      direction: rtl;
+      font-family: Tahoma, Arial, 'Cairo', sans-serif;
+      background: #f6f8fa;
+    }
+    .calc-main-container {
+      max-width: 700px;
+      margin: 50px auto 25px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px 28px;
+      box-shadow: 0 0 10px #ddd;
+    }
+    h1 {
+      text-align: center;
+      color: #245a02;
+      font-size: 1.6em;
+      margin-bottom: 20px;
+    }
+    label, select, input, button {
+      font-size: 1em;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .inline-select-row {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 20px;
+      align-items: flex-end;
+      margin-bottom: 12px;
+    }
+    .inline-select-row label {
+      margin-bottom: 3px;
+      margin-right: 2px;
+      margin-left: 2px;
+      display: block;
+    }
+    .inline-column {
+      flex: 1 1 0;
+      min-width: 160px;
+    }
+    .pppcalc-results span { display:inline-block; min-width:120px; }
+    .pppcalc-two-btns {
+      display:flex;
+      flex-direction:row-reverse;
+      gap:12px;
+      margin-bottom:8px;
+    }
+    .pppcalc-resultbox {
+      background: #e1ffe3;
+      border-radius: 8px; 
+      padding: 13px 14px; 
+      font-size: 1.14em; 
+      color: #146e22; 
+      margin-bottom: 12px;
+      margin-top: 10px;
+    }
+    .pppcalc-note {
+      background: #fffbe7;
+      margin:10px 0 12px 0;
+      padding: 9px 10px;
+      border-radius: 9px;
+      color: #d7a000;
+      font-size: .97em;
+    }
+    .pppcalc-chart-area {
+      margin:30px auto 40px auto;
+      max-width:1500px;
+      text-align: center;
+    }
+    #pppChart {
+      width: 1350px !important;
+      height: 600px !important;
+      max-width: 100%;
+      max-height: 100vh;
+      display: inline-block;
+    }
+    @media (max-width: 1280px) {
+      #pppChart {
+        width: 1000px !important;
+        height: 430px !important;
+      }
+    }
+    @media (max-width: 900px) {
+      #pppChart {
+        width: 97vw !important;
+        height: 48vw !important;
+        min-height: 300px;
+      }
+      .pppcalc-chart-area {
+        max-width: 99vw;
+      }
+    }
+    .salcalc-disclaimer { margin-top: 16px; color: #555; }
+    .salcalc-resources { margin-top: 20px; background: #d0e8f2; padding: 10px 14px; border-radius: 7px; font-size: 0.95em; color: #065a91; }
+    .salcalc-credit { margin-top:20px; font-size:0.84em; color:#444; text-align:center; font-family: Arial, sans-serif; }
+    .salcalc-credit a { color:#0073b1; text-decoration:none; }
+  </style>
+<script defer="" data-domain="salcalc4eg.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script><script defer="" data-domain="salcalc4eg.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+<body>
+  <div class="calc-main-container">
+    <h1>حاسبة مرتبات المصريين في السوق الخليجي وفق القوة الشرائية الفعلية</h1>
+    <div class="calc-section">
+      <form id="pppCalculator" onsubmit="return false;">
+        <label>دخلك الحالي في مصر بالجنيه</label>
+        <input type="number" id="amount" required="" min="0" step="any" value="20000">
+
+        <div class="inline-select-row">
+          <div class="inline-column">
+            <label>الدولة الحالية:</label>
+            <select id="fromCountry">
+              <option value="egypt">مصر</option>
+              <option value="uae">الإمارات</option>
+              <option value="qatar">قطر</option>
+              <option value="ksa">السعودية</option>
+            </select>
+          </div>
+          <div class="inline-column">
+            <label>اختار الدولة الخليجية المستهدفة للعمل:</label>
+            <select id="pppTargetCountry">
+              <option value="uae">الإمارات</option>
+              <option value="qatar">قطر</option>
+              <option value="ksa">السعودية</option>
+            </select>
+          </div>
+        </div>
+
+        <label>السنة:</label>
+        <select id="yearSelect"></select>
+
+        <label>المستهدف كم ضعف للمرتب:</label>
+        <select id="pppTargetMultiplier">
+          <option value="1">نفس مستوى المعيشة</option>
+          <option value="2">مرتين</option>
+          <option value="3">ثلاث مرات</option>
+          <option value="4">أربعة مرات</option>
+        </select>
+
+        <label>اختار نوع الشغل:</label>
+        <select id="pppWorkLocation">
+          <option value="host">العمل في البلد نفسها</option>
+          <option value="egypt">الشغل عن بعد من مصر</option>
+        </select>
+        <div class="pppcalc-two-btns">
+          <button type="button" onclick="calculatePPP()" style="background:#146e22;color:#fff;">احسب مرتبك الجديد</button>
+        </div>
+      </form>
+      <div id="pppcalcTargetResult" class="pppcalc-resultbox" style="display:none"></div>
+      <div id="pppResultsWrap">
+        <div class="pppcalc-results" id="calcResults"></div>
+        <div class="pppcalc-note" id="pppHowPPP">
+          <b>طريقة الحساب الصح (PPP):</b><br>
+          <div style="background: #f7fbfc; padding: 7px 12px; border-radius: 7px; margin: 7px 0;">
+            1. خُد مرتبك بالجنيه وقسمه على معامل مصر (7.13) عشان تحسبه بالدولار بالقوة الشرائية<br>
+            2. اختار كام ضعف عايز تزود مرتبك (مثلا مرتين = ضعف مستوى معيشتك)<br>
+            3. اضرب الناتج ده في معامل PPP بتاع البلد اللي عايز تروحها<br>
+            4. وقتها تعرف محتاج مرتب كام هناك عشان تعيش زي هنا أو أحسن
+          </div>
+          <span style="font-size:0.93em;">
+            سعر الدولار الحقيقي في مصر بالقوة الشرائية حوالي 7.13 جنيه، مش 48 جم وفق 8/2025، عشان كده لازم تقارن صح!
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="pppcalc-chart-area">
+      <canvas id="pppChart" width="1350" height="600"></canvas>
+    </div>
+  </div>
+
+  <div style="max-width: 540px; margin:40px auto 10px auto;">
+    <div class="salcalc-disclaimer">
+      <b>تنويه:</b> كل الأرقام تقريبية من صندوق النقد الدولي وممكن تتغير، الهدف تسهيل قرارك وانت بتدور على فرصة أحسن.
+    </div>
+    <div class="salcalc-resources">
+      <b>مصادر مهمة:</b><br>
+      <a href="https://www.imf.org/external/datamapper/PPPEX@WEO/OEMDC/ADVEC/WEOWORLD/EGY/KEN/ETH/SAU/QAT" target="_blank">شوف بيانات قوة الشراء (PPP) الرسمي لكل دولة من هنا</a>
+    </div>
+    <div class="salcalc-credit">
+      التطبيق ده معمول ومجاني برعاية <b>حسام زين</b> -
+      <a href="https://www.linkedin.com/in/hossamzein" target="_blank" rel="noopener">لينكدإن</a>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    // سنوات من 2000 إلى 2030 فقط
+    const pppcalc_years = [
+      2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,
+      2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030
+    ];
+    const pppcalc_egyptAll = [0.187,0.183,0.19,0.205,0.206,0.217,0.225,0.301,0.335,0.39,0.459,0.504,0.614,0.658,0.689,0.753,0.793,0.825,0.848,0.843,0.865,0.862,0.869,0.91,0.99,1.019,1.061,1.164,1.281,1.415,1.54,1.685,1.985,2.092,2.287,2.495,2.633,3.169,3.581,3.893,3.695,3.855,3.971,4.784,6.244,7.308,8.046,8.687,9.078,9.395,9.71];
+    const pppcalc_uaeAll = [2.378,2.218,2.093,1.948,1.784,1.741,1.676,1.705,1.719,1.65,1.659,1.527,1.526,1.492,1.496,1.519,1.626,1.559,1.492,1.589,1.687,1.632,1.668,1.702,1.799,2.032,2.207,2.418,2.812,2.371,2.634,2.921,3.001,2.923,2.854,2.368,2.216,2.285,2.235,2.114,2.089,2.363,2.484,2.366,2.326,2.226,2.184,2.181,2.178,2.181,2.184];
+    const pppcalc_qatarAll = [1.776,1.859,1.673,1.448,1.249,1.302,0.972,0.99,0.876,0.846,1.33,1.163,1.179,1.056,1.039,1.17,1.247,1.234,0.942,1.188,1.743,1.578,1.607,1.859,1.962,2.57,2.557,2.73,3.379,2.326,2.649,3.268,3.412,3.38,3.273,2.428,2.189,2.318,2.35,2.263,2.29,2.235,2.627,2.26,2.241,2.145,2.106,2.081,2.067,2.068,2.059];
+    const pppcalc_ksaAll = [1.746,1.764,1.669,1.533,1.456,1.358,1.128,1.132,1.056,1.094,1.189,1.194,1.157,1.093,1.077,1.115,1.174,1.176,1.001,1.095,1.198,1.135,1.158,1.189,1.278,1.483,1.597,1.68,1.94,1.609,1.863,2.107,2.151,2.096,2.018,1.671,1.616,1.689,1.854,1.862,1.921,1.909,2.103,1.97,1.93,1.823,1.781,1.777,1.775,1.777,1.776];
+
+    // بيانات من 2000 إلى 2030 فقط
+    const fromIndex = 20, toIndex = 51;
+    const pppcalc_egypt = pppcalc_egyptAll.slice(fromIndex,toIndex);
+    const pppcalc_uae   = pppcalc_uaeAll.slice(fromIndex,toIndex);
+    const pppcalc_qatar = pppcalc_qatarAll.slice(fromIndex,toIndex);
+    const pppcalc_ksa   = pppcalc_ksaAll.slice(fromIndex,toIndex);
+
+    const pppcalc_pppData = {
+        egypt: pppcalc_egypt, uae: pppcalc_uae, qatar: pppcalc_qatar, ksa: pppcalc_ksa
+    };
+    const pppcalc_countryNames = {
+        egypt: "مصر",
+        uae: "الإمارات",
+        qatar: "قطر",
+        ksa: "السعودية"
+    };
+    const pppcalc_latestPPP = {egypt:7.13,uae:2.23,qatar:2.15,ksa:1.82};
+    const pppcalc_latestFX = {egypt:48.25,uae:3.6725,qatar:3.64,ksa:3.75};
+
+    // تهيئة سنوات الاختيار مع جعل الافتراضي 2025
+    (function(){
+      const yearSelect = document.getElementById("yearSelect");
+      let defaultIdx = 0;
+      pppcalc_years.forEach((year,i) => {
+        yearSelect.innerHTML += `<option value="${i}">${year}</option>`;
+        if(year === 2025) defaultIdx = i;
+      });
+      yearSelect.selectedIndex = defaultIdx;
+    })();
+
+    function calculatePPP() {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const fromCountry = document.getElementById("fromCountry").value;
+      const yearIdx = parseInt(document.getElementById("yearSelect").value);
+
+      const targetMultiplier = parseInt(document.getElementById("pppTargetMultiplier").value || 1);
+      const targetCountry = document.getElementById("pppTargetCountry").value;
+      const workLocation = document.getElementById("pppWorkLocation").value;
+
+      let html = `<strong>نتائج التحويل لـ ${pppcalc_years[yearIdx]}:</strong><br>`;
+      const fromPPP = pppcalc_pppData[fromCountry][yearIdx];
+
+      for (const [key, arr] of Object.entries(pppcalc_pppData)) {
+        const toPPP = arr[yearIdx];
+        if (fromPPP && toPPP) {
+          const converted = amount * (toPPP/fromPPP);
+          html += `<span>${pppcalc_countryNames[key]}: ${converted.toLocaleString(undefined, {maximumFractionDigits:2})}</span> `;
+        } else {
+          html += `<span>${pppcalc_countryNames[key]}: لا توجد بيانات</span> `;
+        }
+      }
+      document.getElementById("calcResults").innerHTML = html;
+
+      // حساب المستهدف بالخليج
+      let targetBox = "";
+      const targetPPP = pppcalc_pppData[targetCountry][yearIdx];
+      if (fromPPP && targetPPP) {
+        if (workLocation === 'host') {
+          const needed = (amount / fromPPP) * targetMultiplier * targetPPP;
+          targetBox += `لو هدفك تعيش في <b>${pppcalc_countryNames[targetCountry]}</b> بمستوى ${targetMultiplier} ضعف:<br>`;
+          targetBox += `<b>مطلوب يكون راتبك ${needed.toLocaleString(undefined, {maximumFractionDigits:2})} 
+            ${(targetCountry==='uae'?'درهم': 'ريال')} في الشهر</b> `;
+          targetBox += `<span style="color:#888;font-size:.92em">(على أساس القوة الشرائية لعام ${pppcalc_years[yearIdx]})</span>`;
+        } else {
+          const usdByFX = amount / (pppcalc_latestFX[fromCountry]);
+          const salaryByFX = usdByFX * pppcalc_latestFX[targetCountry] * targetMultiplier;
+          targetBox += `لو بتقبض وأنت في مصر وراتبك يحول من <b>${pppcalc_countryNames[targetCountry]}</b>:<br>`;
+          targetBox += `<b>مرتبك المتوقع تقريباً ${salaryByFX.toLocaleString(undefined, {maximumFractionDigits:2})} 
+          ${(targetCountry==='uae'?'درهم': 'ريال')} في الشهر.</b> `;
+          targetBox += `<span style="color:#888;font-size:.92em">(على أساس سعر التحويل الرسمي بحسب أحدث سنة)</span>`;
+        }
+        document.getElementById('pppcalcTargetResult').innerHTML = targetBox;
+        document.getElementById('pppcalcTargetResult').style.display = 'block';
+      } else {
+        document.getElementById('pppcalcTargetResult').style.display = 'none';
+      }
+    }
+
+    // رسم الرسم البياني
+    (function(){
+      const ctx = document.getElementById('pppChart').getContext('2d');
+      new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: pppcalc_years,
+              datasets: [
+                  { label: 'مصر', data: pppcalc_egypt, borderColor: 'green', fill: false, tension: 0.21 },
+                  { label: 'الإمارات', data: pppcalc_uae, borderColor: 'blue', fill: false, tension: 0.21 },
+                  { label: 'قطر', data: pppcalc_qatar, borderColor: 'orange', fill: false, tension: 0.21 },
+                  { label: 'السعودية', data: pppcalc_ksa, borderColor: 'red', fill: false, tension: 0.21 }
+              ]
+          },
+          options: {
+              responsive: false, // مهم كي يجبر الرسم أن يكون بالحجم المحدد دومًا
+              plugins: {
+                  legend: { position: 'top' },
+                  title: { display: false }
+              },
+              scales: {
+                  x: { title: { display: true, text: 'السنة' } },
+                  y: { title: { display: true, text: 'قيمة التحويل (عملة محلية لكل دولار دولي)' }, beginAtZero: true }
+              }
+          }
+      });
+    })();
+
+    window.onload = function() { calculatePPP(); };
+  </script>
+
+
+</body></html>
